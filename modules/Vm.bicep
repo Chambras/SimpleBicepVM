@@ -75,10 +75,10 @@ resource Pip 'Microsoft.Network/publicIPAddresses@2024-05-01' = {
   name: vmPipName
   location: vmLocation
   sku: {
-    name: 'Basic'
+    name: 'Standard'
   }
   properties:{
-    publicIPAllocationMethod:'Dynamic'
+    publicIPAllocationMethod:'Static'
   }
   tags: tags
 }

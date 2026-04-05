@@ -63,9 +63,9 @@ You can use the _parameters.json_ file to customize the deployment.
 ## Validate, Plan and Create
 
 ```ssh
-az deployment sub validate -n TestDev -f deploy.bicep -p @parameters.json -l eastus2 -o table
-az deployment sub create -n TestDev -f deploy.bicep -p @parameters.json -l eastus2 -w
-az deployment sub create -n TestDev -f deploy.bicep -p @parameters.json -l eastus2
+az deployment sub validate -n VMTest -f deploy.bicep -p @parameters.json -l eastus2 -o table
+az deployment sub create -n VMTest -f deploy.bicep -p @parameters.json -l eastus2 -w
+az deployment sub create -n VMTest -f deploy.bicep -p @parameters.json -l eastus2
 ```
 
 During deployment you will be prompted for the password for the administrator account.
@@ -75,14 +75,15 @@ During deployment you will be prompted for the password for the administrator ac
 The script outputs the following information: the Resource Group ID, the Resource Group Name, the VM Name, the VM private IP address and the VM public IP address.
 
 ```ssh
-az deployment sub show -n TestDev --query "properties.outputs" -o yaml
+az deployment sub show -n VMTest --query "properties.outputs" -o yaml
 ```
 
 ## Clean resources
 
 ```ssh
-az deployment sub delete -n TestDev
-az deployment group delete -n {{ResourceGroupName}}
+RG_NAME=$(az deployment sub show -n VMTest --query "properties.outputs.RGName.value" -o tsv)
+az group delete -n "$RG_NAME" --yes --no-wait
+az deployment sub delete -n VMTest
 ```
 
 ## CI/CD with GitHub Actions

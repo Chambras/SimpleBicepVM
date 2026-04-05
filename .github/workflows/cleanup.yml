@@ -22,10 +22,16 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
+      - name: Resolve resource group name
+        id: resolve-rg
+        run: |
+          rg_name=$(az deployment sub show -n TestDev --query "properties.outputs.RGName.value" -o tsv)
+          echo "rg_name=$rg_name" >> "$GITHUB_OUTPUT"
+
       - name: Delete resource group
         run: |
           az group delete \
-            -n TestDev \
+            -n "${{ steps.resolve-rg.outputs.rg_name }}" \
             --yes --no-wait
 
       - name: Delete subscription deployment

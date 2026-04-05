@@ -71,7 +71,7 @@ param imageOffer string = 'Windows-11'
   '8-lvm-gen2'
   '9-lvm-gen2'
 ])
-param imageSku string = '2025-datacenter-g2'
+param imageSku string = 'win11-24h2-pro'
 
 @description('Resource Group name.')
 param rgName string
@@ -123,7 +123,7 @@ module vm './modules/Vm.bicep' = {
   name: 'vm'
   scope: resourceGroup
   params: {
-    vmName: 'ADTest'
+    vmName: 'VMTest'
     vmLocation: location
     vmSize: vmSize
     vmOsType: vmOsType
