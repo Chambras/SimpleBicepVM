@@ -81,7 +81,7 @@ az deployment sub show -n VMTest --query "properties.outputs" -o yaml
 ## Clean resources
 
 ```ssh
-RG_NAME=$(az deployment sub show -n VMTest --query "properties.outputs.RGName.value" -o tsv)
+RG_NAME=$(az deployment sub show -n VMTest --query "properties.outputs.rgName.value" -o tsv)
 az group delete -n "$RG_NAME" --yes --no-wait
 az deployment sub delete -n VMTest
 ```
