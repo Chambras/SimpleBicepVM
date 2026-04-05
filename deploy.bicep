@@ -13,7 +13,6 @@ param tags object = {}
 @description('Size of the virtual machine.')
 param vmSize string = 'Standard_D2s_v3'
 
-@secure()
 param adminUsername string
 
 @secure()
@@ -33,10 +32,23 @@ param imageSku string = '2025-datacenter-g2'
 @description('Resource Group name.')
 param rgName string
 
+@description('Allowed source IP or CIDR for RDP access (port 3389).')
+param allowedRdpSourceAddress string
+
 resource resourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
   name: rgName
   location: location
   tags: tags
+}
+
+module nsg './modules/Nsg.bicep' = {
+  name: 'nsg'
+  scope: resourceGroup
+  params: {
+    location: location
+    allowedRdpSourceAddress: allowedRdpSourceAddress
+    tags: tags
+  }
 }
 
 module vnet './modules/Vnet.bicep' = {
@@ -47,6 +59,7 @@ module vnet './modules/Vnet.bicep' = {
     vnetname: vnetName
     addressprefix: vnetAddressSpace
     defaultsubnetprefix: defaultSubnet
+    nsgId: nsg.outputs.nsgId
     tags: tags
   }
 }

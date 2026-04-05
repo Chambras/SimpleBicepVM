@@ -10,6 +10,9 @@ param addressprefix string = '10.0.1.0/24'
 @description('Specifies the Subnet Address Prefix for the server subnet')
 param defaultsubnetprefix string = '10.0.1.0/26'
 
+@description('NSG resource ID to associate with the default subnet.')
+param nsgId string
+
 @description('Tags for the Vnet.')
 param tags object = {}
 
@@ -26,8 +29,11 @@ resource vnet 'Microsoft.Network/virtualNetworks@2020-05-01' = {
           {
               name: 'default'
               properties: {
-                  addressPrefix: defaultsubnetprefix          
-              }            
+                  addressPrefix: defaultsubnetprefix
+                  networkSecurityGroup: {
+                      id: nsgId
+                  }
+              }
           }
       ]
   }
