@@ -1,10 +1,10 @@
-param VmName string
-param VmLocation string
+param vmName string
+param vmLocation string
 
 @description('Specifies the size for the VM.')
-param VmSize string
-param VmOsType string 
-param VmNicSubnetId string
+param vmSize string
+param vmOsType string
+param vmNicSubnetId string
 param diagnosticsStorageUri string
 param licenseType string = ''
 
@@ -19,35 +19,22 @@ param adminCreds string
 @description('Tags for the VM')
 param tags object = {}
 
-@description('The Windows version for the VM. This will pick a fully patched image of this given Windows version.')
-@allowed([
-  '2012-R2-Datacenter'
-  '2016-Datacenter'
-  '2019-Datacenter'
-  '2019-Datacenter-Core'
-  '2019-Datacenter-Core-smalldisk'
-  '2019-Datacenter-smalldisk'
-  '2022-datacenter'
-  '2022-datacenter-azure-edition-smalldisk'
-  '2022-datacenter-core'
-  '2022-datacenter-core-g2'
-  '2022-datacenter-core-smalldisk'
-  '2022-datacenter-core-smalldisk-g2'
-  '2022-datacenter-g2'
-  '2022-datacenter-smalldisk'
-  '2022-datacenter-smalldisk-g2'
-])
-param OSVersion string = '2019-Datacenter'
+@description('VM image publisher. Use MicrosoftWindowsServer for Server or MicrosoftWindowsDesktop for Windows 11.')
+param imagePublisher string = 'MicrosoftWindowsServer'
 
+@description('VM image offer. Use WindowsServer for Server or Windows-11 for Windows 11.')
+param imageOffer string = 'WindowsServer'
 
-var VmOsDiskName = '${VmName}od01'
-var VmNicName = '${VmName}ni01'
-var VmPipName = '${VmName}pip01'
+@description('VM image SKU. E.g. 2025-datacenter-g2 for Server or win11-24h2-ent for Windows 11.')
+param imageSku string = '2025-datacenter-g2'
 
+var vmOsDiskName = '${vmName}od01'
+var vmNicName = '${vmName}ni01'
+var vmPipName = '${vmName}pip01'
 
 resource Pip 'Microsoft.Network/publicIPAddresses@2022-01-01' = {
-  name: VmPipName
-  location: VmLocation
+  name: vmPipName
+  location: vmLocation
   sku: {
     name: 'Basic'
   }
@@ -58,8 +45,8 @@ resource Pip 'Microsoft.Network/publicIPAddresses@2022-01-01' = {
 }
 
 resource Nic 'Microsoft.Network/networkInterfaces@2022-01-01' = {
-  name: VmNicName
-  location: VmLocation
+  name: vmNicName
+  location: vmLocation
   properties: {
     ipConfigurations: [
       {
@@ -67,7 +54,7 @@ resource Nic 'Microsoft.Network/networkInterfaces@2022-01-01' = {
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           subnet: {
-            id: VmNicSubnetId
+            id: vmNicSubnetId
           }
           primary: true
           publicIPAddress: {
@@ -86,17 +73,17 @@ resource Nic 'Microsoft.Network/networkInterfaces@2022-01-01' = {
 }
 
 resource VirtualMachine 'Microsoft.Compute/virtualMachines@2022-03-01' = {
-  name: VmName
-  location: VmLocation
+  name: vmName
+  location: vmLocation
   properties: {
     hardwareProfile: {
-      vmSize: VmSize
+      vmSize: vmSize
     }
     storageProfile: {
       osDisk: {
-        name: VmOsDiskName
+        name: vmOsDiskName
         createOption: 'FromImage'
-        osType: VmOsType
+        osType: vmOsType
         managedDisk:{
           storageAccountType: 'Premium_LRS'
         }
@@ -109,14 +96,14 @@ resource VirtualMachine 'Microsoft.Compute/virtualMachines@2022-03-01' = {
         }
       ]
       imageReference: {
-        publisher: 'MicrosoftWindowsServer'
-        offer: 'WindowsServer'
-        sku: OSVersion
+        publisher: imagePublisher
+        offer: imageOffer
+        sku: imageSku
         version: 'latest'
       }
     }
     osProfile: {
-      computerName: VmName
+      computerName: vmName
       adminUsername: adminUsername
       adminPassword: adminCreds
     }

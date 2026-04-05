@@ -11,7 +11,7 @@
     "storageAccountName": {
       "value": "mzvdiagstorageadtest"
     },
-    "VmSize": {
+    "vmSize": {
       "value": "Standard_D2s_v3"
     },
     "adminUsername": {

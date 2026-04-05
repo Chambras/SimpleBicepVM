@@ -11,7 +11,7 @@ param tags object = {}
 
 // VMs
 @description('Size of the virtual machine.')
-param VmSize string = 'Standard_D2s_v3'
+param vmSize string = 'Standard_D2s_v3'
 
 @secure()
 param adminUsername string
@@ -19,12 +19,19 @@ param adminUsername string
 @secure()
 param adminCreds string
 
-param VmOsType string = 'Windows' 
+param vmOsType string = 'Windows'
 
+@description('VM image publisher. Use MicrosoftWindowsServer for Server or MicrosoftWindowsDesktop for Windows 11.')
+param imagePublisher string = 'MicrosoftWindowsServer'
+
+@description('VM image offer. Use WindowsServer for Server or Windows-11 for Windows 11.')
+param imageOffer string = 'WindowsServer'
+
+@description('VM image SKU. E.g. 2025-datacenter-g2 for Server or win11-24h2-ent for Windows 11.')
+param imageSku string = '2025-datacenter-g2'
 
 @description('Resource Group name.')
 param rgName string
-
 
 resource resourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
   name: rgName
@@ -45,9 +52,9 @@ module vnet './modules/Vnet.bicep' = {
 }
 
 module diagnosticstorageaccount './modules/StorageAccount.bicep' = {
-  name: 'diagnosticstorageaccount' 
+  name: 'diagnosticstorageaccount'
   scope: resourceGroup
-  params:{
+  params: {
     storageAccountName: storageAccountName
     location: location
     skuName: 'Standard_LRS'
@@ -59,51 +66,24 @@ module vm './modules/Vm.bicep' = {
   name: 'vm'
   scope: resourceGroup
   params: {
-    VmName: 'ADTest'
-    VmLocation: location
-    VmSize: VmSize
-    VmOsType: VmOsType 
-    VmNicSubnetId: vnet.outputs.defaultsubnetid
-    adminUsername: adminUsername 
+    vmName: 'ADTest'
+    vmLocation: location
+    vmSize: vmSize
+    vmOsType: vmOsType
+    vmNicSubnetId: vnet.outputs.defaultsubnetid
+    adminUsername: adminUsername
     adminCreds: adminCreds
     diagnosticsStorageUri: diagnosticstorageaccount.outputs.blobUri
+    imagePublisher: imagePublisher
+    imageOffer: imageOffer
+    imageSku: imageSku
     licenseType: 'Windows_Server'
     tags: tags
   }
-  dependsOn:[
-    vnet
-    diagnosticstorageaccount
-  ]
 }
 
-/*module vm2 './modules/Vm.bicep' = {
-  name: 'vm2'
-  scope: resourceGroup
-  params: {
-    VmName: 'ADTest2'
-    VmLocation: location
-    sharedImageGallerySubscriptionID: sharedImageGallerySubscriptionID
-    sharedImageGalleryRGName: sharedImageGalleryRGName
-    sharedImageGalleryName: sharedImageGalleryName
-    sharedImageGalleryImageName: sharedImageGalleryImageName
-    VmSize: VmSize
-    VmOsType: VmOsType 
-    VmNicSubnetId: vnet.outputs.defaultsubnetid
-    adminUsername: adminUsername 
-    adminCreds: adminCreds
-    diagnosticsStorageUri: diagnosticstorageaccount.outputs.blobUri
-    licenseType: 'Windows_Server'
-    tags: tags
-  }
-  dependsOn:[
-    vnet
-    diagnosticstorageaccount
-  ]
-}
-*/
 output RGId string = resourceGroup.id
 output RGName string = resourceGroup.name
 output VMName string = vm.outputs.VirtualMachineName
 output VMPrivateIPAddress string = vm.outputs.VirtualMachinePrivateIPAddress
 output VMPublicIpAddress string = vm.outputs.VirtualMachinePublicIPAddress
-//output VMPublicIpAddress2 string = vm2.outputs.VirtualMachinePublicIPAddress
