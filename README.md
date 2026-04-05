@@ -1,5 +1,8 @@
 # Deploy Windows VM
 
+[![Validate](https://github.com/Chambras/SimpleBicepVM/actions/workflows/validate.yml/badge.svg)](https://github.com/Chambras/SimpleBicepVM/actions/workflows/validate.yml)
+[![Deploy](https://github.com/Chambras/SimpleBicepVM/actions/workflows/deploy.yml/badge.svg)](https://github.com/Chambras/SimpleBicepVM/actions/workflows/deploy.yml)
+
 Simple bicep module to quickly deploy and test a Windows VM.
 
 It creates the following resources:
@@ -85,6 +88,32 @@ az deployment group delete -n {{ResourceGroupName}}
 ## Caution
 
 Be aware that by running this script your account will get billed.
+
+## CI/CD with GitHub Actions
+
+This project includes three GitHub Actions workflows:
+
+| Workflow | Trigger | Description |
+| :-- | :-- | :-- |
+| **Validate** | Pull request to `main` | Validates the Bicep deployment |
+| **Deploy** | Push to `main` / Manual | Deploys the infrastructure to Azure |
+| **Cleanup** | Manual only | Deletes the resource group and deployment |
+
+### Setup
+
+1. **Register an Azure AD application** and configure a [federated credential](https://learn.microsoft.com/en-us/entra/workload-id/workload-identity-federation-create-trust) for GitHub Actions OIDC.
+
+2. **Add the following GitHub Secrets** to your repository:
+
+   | Secret | Description |
+   | :-- | :-- |
+   | `AZURE_CLIENT_ID` | Azure AD application (client) ID |
+   | `AZURE_TENANT_ID` | Azure AD directory (tenant) ID |
+   | `AZURE_SUBSCRIPTION_ID` | Azure subscription ID |
+   | `ADMIN_PASSWORD` | Password for the VM administrator account |
+   | `ALLOWED_RDP_SOURCE` | Source IP or CIDR allowed for RDP access |
+
+3. **Manual triggers**: Go to the _Actions_ tab in GitHub, select the **Deploy** or **Cleanup** workflow, and click _Run workflow_.
 
 ## Authors
 
