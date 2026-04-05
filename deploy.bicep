@@ -18,6 +18,10 @@ param adminUsername string
 @secure()
 param adminCreds string
 
+@allowed([
+  'Windows'
+  'Linux'
+])
 param vmOsType string = 'Windows'
 
 @description('VM image publisher. Use MicrosoftWindowsServer for Server or MicrosoftWindowsDesktop for Windows 11.')
@@ -35,7 +39,7 @@ param rgName string
 @description('Allowed source IP or CIDR for RDP access (port 3389).')
 param allowedRdpSourceAddress string
 
-resource resourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
+resource resourceGroup 'Microsoft.Resources/resourceGroups@2024-07-01' = {
   name: rgName
   location: location
   tags: tags

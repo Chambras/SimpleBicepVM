@@ -32,7 +32,7 @@ var vmOsDiskName = '${vmName}od01'
 var vmNicName = '${vmName}ni01'
 var vmPipName = '${vmName}pip01'
 
-resource Pip 'Microsoft.Network/publicIPAddresses@2022-01-01' = {
+resource Pip 'Microsoft.Network/publicIPAddresses@2024-05-01' = {
   name: vmPipName
   location: vmLocation
   sku: {
@@ -44,7 +44,7 @@ resource Pip 'Microsoft.Network/publicIPAddresses@2022-01-01' = {
   tags: tags
 }
 
-resource Nic 'Microsoft.Network/networkInterfaces@2022-01-01' = {
+resource Nic 'Microsoft.Network/networkInterfaces@2024-05-01' = {
   name: vmNicName
   location: vmLocation
   properties: {
@@ -72,7 +72,7 @@ resource Nic 'Microsoft.Network/networkInterfaces@2022-01-01' = {
   tags: tags
 }
 
-resource VirtualMachine 'Microsoft.Compute/virtualMachines@2022-03-01' = {
+resource VirtualMachine 'Microsoft.Compute/virtualMachines@2024-07-01' = {
   name: vmName
   location: vmLocation
   properties: {

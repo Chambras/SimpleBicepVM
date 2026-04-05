@@ -5,7 +5,7 @@ param skuName string
 @description('Tags for the Storage Account')
 param tags object = {}
 
-resource storageAccount 'Microsoft.Storage/storageAccounts@2022-05-01' = {
+resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
   name: storageAccountName
   location: location
   kind: 'StorageV2'
@@ -37,7 +37,7 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2022-05-01' = {
   tags: tags
 }
 
-resource saFileService 'Microsoft.Storage/storageAccounts/fileServices@2022-05-01' = {
+resource saFileService 'Microsoft.Storage/storageAccounts/fileServices@2023-05-01' = {
   parent: storageAccount
   name: 'default'
   properties: {
@@ -47,7 +47,7 @@ resource saFileService 'Microsoft.Storage/storageAccounts/fileServices@2022-05-0
     }
   }
 }
-resource saFileShareTracking 'Microsoft.Storage/storageAccounts/fileServices/shares@2022-05-01' = {
+resource saFileShareTracking 'Microsoft.Storage/storageAccounts/fileServices/shares@2023-05-01' = {
   parent: saFileService
   name: 'scripts'
   properties: {
