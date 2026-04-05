@@ -1,8 +1,8 @@
 @description('Specifies the Azure location where the resource should be created.')
 param location string
 
-@description('Allowed source IP or CIDR for RDP access (port 3389).')
-param allowedRdpSourceAddress string
+@description('Allowed source IPs or CIDRs for RDP access (port 3389).')
+param allowedRdpSourceAddresses array
 
 @description('Tags for the NSG.')
 param tags object = {}
@@ -21,7 +21,7 @@ resource nsg 'Microsoft.Network/networkSecurityGroups@2024-05-01' = {
           protocol: 'Tcp'
           sourcePortRange: '*'
           destinationPortRange: '3389'
-          sourceAddressPrefix: allowedRdpSourceAddress
+          sourceAddressPrefixes: allowedRdpSourceAddresses
           destinationAddressPrefix: '*'
         }
       }

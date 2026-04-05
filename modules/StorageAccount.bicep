@@ -1,5 +1,10 @@
+@description('Name of the storage account.')
 param storageAccountName string
+
+@description('Azure region for the storage account.')
 param location string
+
+@description('SKU name for the storage account (e.g. Standard_LRS).')
 param skuName string
 
 @description('Tags for the Storage Account')

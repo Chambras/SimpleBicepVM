@@ -31,5 +31,4 @@ jobs:
             -f deploy.bicep \
             -p @parameters.json \
             -p adminCreds=${{ secrets.ADMIN_PASSWORD }} \
-               allowedRdpSourceAddress=${{ secrets.ALLOWED_RDP_SOURCE }} \
             -l eastus2

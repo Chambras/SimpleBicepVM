@@ -36,8 +36,8 @@ It assumes you have access to an Azure Subscription and you have [az cli install
 
 This bicep script has been tested using the following versions:
 
-- Azure CLI 2.40.0
-- Bicep 0.11.1
+- Azure CLI 2.84.0
+- Bicep 0.42.1
 
 ## Parameters
 
@@ -52,9 +52,9 @@ You can use the _parameters.json_ file to customize the deployment.
 | `storageAccountName` | String | diagstoragenestedvirtua |  | Storage account where to store the boot diagnostics. |
 | `adminUsername` | String |  |  | Administrator username. |
 | `adminCreds` | secureString |  |  | The password for the VM. Prompted at deploy time. |
-| `vmSize` | String | Standard_D2s_v3 |  | Specifies the size for the VM. |
+| `vmSize` | String | Standard_D2s_v6 |  | Specifies the size for the VM. |
 | `vmOsType` | String | Windows | Windows, Linux | OS type for the VM disk. |
-| `allowedRdpSourceAddress` | String |  |  | Source IP or CIDR allowed for RDP access (port 3389). |
+| `allowedRdpSourceAddresses` | Array | |  | List of source IPs or CIDRs allowed for RDP access (port 3389). |
 | `imagePublisher` | String | MicrosoftWindowsServer |  | VM image publisher. Use `MicrosoftWindowsDesktop` for Windows 11. |
 | `imageOffer` | String | WindowsServer |  | VM image offer. Use `Windows-11` for Windows 11. |
 | `imageSku` | String | 2025-datacenter-g2 |  | VM image SKU. E.g. `win11-24h2-ent` for Windows 11. |
@@ -68,7 +68,7 @@ az deployment sub create -n TestDev -f deploy.bicep -p @parameters.json -l eastu
 az deployment sub create -n TestDev -f deploy.bicep -p @parameters.json -l eastus2
 ```
 
-During deployment you will be prompted for the password for the administrator account, and the allowed RDP source address.
+During deployment you will be prompted for the password for the administrator account.
 
 ## List the deployment outputs
 
@@ -84,10 +84,6 @@ az deployment sub show -n TestDev --query "properties.outputs" -o yaml
 az deployment sub delete -n TestDev
 az deployment group delete -n {{ResourceGroupName}}
 ```
-
-## Caution
-
-Be aware that by running this script your account will get billed.
 
 ## CI/CD with GitHub Actions
 
@@ -111,9 +107,23 @@ This project includes three GitHub Actions workflows:
    | `AZURE_TENANT_ID` | Azure AD directory (tenant) ID |
    | `AZURE_SUBSCRIPTION_ID` | Azure subscription ID |
    | `ADMIN_PASSWORD` | Password for the VM administrator account |
-   | `ALLOWED_RDP_SOURCE` | Source IP or CIDR allowed for RDP access |
+
+   You can set these using the [GitHub CLI](https://cli.github.com/):
+
+   ```sh
+   gh secret set AZURE_CLIENT_ID --body "<your-client-id>"
+   gh secret set AZURE_TENANT_ID --body "<your-tenant-id>"
+   gh secret set AZURE_SUBSCRIPTION_ID --body "<your-subscription-id>"
+   gh secret set ADMIN_PASSWORD
+   ```
+
+   > **Tip**: Omit `--body` for sensitive values like `ADMIN_PASSWORD` — the CLI will prompt you to enter the value securely.
 
 3. **Manual triggers**: Go to the _Actions_ tab in GitHub, select the **Deploy** or **Cleanup** workflow, and click _Run workflow_.
+
+## Caution
+
+Be aware that by running this script your account will get billed.
 
 ## Authors
 

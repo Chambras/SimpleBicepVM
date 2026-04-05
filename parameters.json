@@ -12,10 +12,10 @@
       "value": "mzvdiagstorageadtest"
     },
     "vmSize": {
-      "value": "Standard_D2s_v3"
+      "value": "Standard_D2s_v6"
     },
     "adminUsername": {
-      "value": "adadmin"
+      "value": "marcelo"
     },
     "tags": {
       "value": {
@@ -23,6 +23,11 @@
         "owner": "marcelo",
         "project": "test"
       }
+    },
+    "allowedRdpSourceAddresses": {
+      "value": [
+        "74.96.174.80/32"
+      ]
     }
   }
 }

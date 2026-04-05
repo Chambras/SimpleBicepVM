@@ -1,11 +1,22 @@
+@description('Name of the virtual machine.')
 param vmName string
+
+@description('Azure region for the VM resources.')
 param vmLocation string
 
 @description('Specifies the size for the VM.')
 param vmSize string
+
+@description('OS type for the VM disk.')
 param vmOsType string
+
+@description('Subnet resource ID for the VM NIC.')
 param vmNicSubnetId string
+
+@description('Storage account blob URI for boot diagnostics.')
 param diagnosticsStorageUri string
+
+@description('Windows license type. Use Windows_Server for hybrid benefit.')
 param licenseType string = ''
 
 @description('Required. Administrator username.')
@@ -19,13 +30,41 @@ param adminCreds string
 @description('Tags for the VM')
 param tags object = {}
 
-@description('VM image publisher. Use MicrosoftWindowsServer for Server or MicrosoftWindowsDesktop for Windows 11.')
+@description('VM image publisher.')
+@allowed([
+  'MicrosoftWindowsServer'
+  'MicrosoftWindowsDesktop'
+  'Canonical'
+  'RedHat'
+])
 param imagePublisher string = 'MicrosoftWindowsServer'
 
-@description('VM image offer. Use WindowsServer for Server or Windows-11 for Windows 11.')
+@description('VM image offer.')
+@allowed([
+  'WindowsServer'
+  'Windows-11'
+  'Windows-10'
+  '0001-com-ubuntu-server-jammy'
+  '0001-com-ubuntu-server-noble'
+  'RHEL'
+])
 param imageOffer string = 'WindowsServer'
 
-@description('VM image SKU. E.g. 2025-datacenter-g2 for Server or win11-24h2-ent for Windows 11.')
+@description('VM image SKU. Must match the selected publisher and offer.')
+@allowed([
+  '2025-datacenter-g2'
+  '2022-datacenter-g2'
+  '2022-datacenter-azure-edition'
+  '2019-datacenter-gensecond'
+  'win11-24h2-ent'
+  'win11-24h2-pro'
+  'win11-23h2-ent'
+  'win10-22h2-ent-g2'
+  '22_04-lts-gen2'
+  '24_04-lts-gen2'
+  '8-lvm-gen2'
+  '9-lvm-gen2'
+])
 param imageSku string = '2025-datacenter-g2'
 
 var vmOsDiskName = '${vmName}od01'
@@ -113,7 +152,7 @@ resource VirtualMachine 'Microsoft.Compute/virtualMachines@2024-07-01' = {
         storageUri: diagnosticsStorageUri
       }
     }
-    licenseType: licenseType
+    licenseType: vmOsType == 'Windows' ? licenseType : null
     networkProfile: {
       networkInterfaces: [
         {
